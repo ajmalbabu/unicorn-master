@@ -1,0 +1,37 @@
+<assembly>
+    <formats>
+        <format>tar</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <fileSets>
+        <fileSet>
+            <directory>./unicorn-api/target</directory>
+            <outputDirectory>target</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>./unicorn-common/target</directory>
+            <outputDirectory>target</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>./unicorn-configuration/target</directory>
+            <outputDirectory>target</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>./unicorn-service/target</directory>
+            <outputDirectory>target</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

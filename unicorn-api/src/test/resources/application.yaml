@@ -1,0 +1,6 @@
+---
+spring:
+  profiles:
+    active: unit-test
+server:
+  context-path: /unicorn-api

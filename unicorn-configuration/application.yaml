@@ -17,14 +17,6 @@ unicorn:
     minIdleConnections: 1
     port: 8080
     timeout: 10000
-  swagger:
-    contact: ~
-    description: "Unicorn REST API Explorer with Swagger Documentation"
-    license: ~
-    licenseUrl: ~
-    termsOfServiceUrl: ~
-    title: "Unicorn REST API Explorer with Swagger"
-    version: "0.0.1"
 server:
   context-path: /unicorn-api
 management:

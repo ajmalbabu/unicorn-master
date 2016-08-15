@@ -56,11 +56,12 @@
 5. Add reactive-stream.
 6. Add Spark. 
 7. Add Akka persistence with AKKA clustering. 
-8. Create a new fork form all the above project based on our needs using DDD style by reorganizing bounded contexts.
-9. Create IONIC with angular - 2 front end with few screens which access RDBMS back-end with spring REST end points. Also evaluate Kendo-UI components.
-10. Create installable in IONIC for Android & iOS devices and upload into App-store.
-11. Create Cloud formation template with Chef scripts to deploy these into AWS with elasticity & auto scaling feature.
-12. Integrate with Cloud-bees for CI/CD.
+8. Create IONIC with angular - 2 front end with few screens which access RDBMS back-end with spring REST end points. Also evaluate Kendo-UI components.
+9. Create installable in IONIC for Android & iOS devices and upload into App-store.
+10. Create Hashicorp - Terra-form for AWS Cloud formation template with Chef scripts to deploy these into AWS with elasticity & auto scaling feature.
+11. Integrate with Cloud-bees for CI/CD.
+12. Use docker using Hashicorp - Packer
+13. Create a new fork form all the above project based on our needs using DDD style by reorganizing bounded contexts.
 
 ####Minor Todo
 1. Remove any unused libraries in pom files.

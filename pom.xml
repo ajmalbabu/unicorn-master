@@ -29,7 +29,7 @@
         <spring.data.redis.version>1.6.2.RELEASE</spring.data.redis.version>
         <spring.batch.core.version>3.0.6.RELEASE</spring.batch.core.version>
         <swagger.version>2.4.0</swagger.version>
-        <akka.framework.version>2.4.0</akka.framework.version>
+        <akka.framework.version>2.4.8</akka.framework.version>
         <typesafe.config.version>1.3.0</typesafe.config.version>
 
         <junit.version>4.12</junit.version>
@@ -72,7 +72,6 @@
 
         <aws-java-sdk.version>1.10.54</aws-java-sdk.version>
 
-        <geohash.version>1.3.0</geohash.version>
         <org.apache.spark.version>1.6.1</org.apache.spark.version>
 
         <msgpack.version>0.6.9</msgpack.version>
@@ -169,10 +168,16 @@
                 <version>${akka.framework.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.typesafe.akka</groupId>
+                <artifactId>akka-persistence_2.11</artifactId>
+                <version>${akka.framework.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.typesafe</groupId>
                 <artifactId>config</artifactId>
                 <version>${typesafe.config.version}</version>
             </dependency>
+
 
             <!-- Spring -->
 

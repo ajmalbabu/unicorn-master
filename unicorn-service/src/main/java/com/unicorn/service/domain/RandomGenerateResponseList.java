@@ -2,11 +2,14 @@ package com.unicorn.service.domain;
 
 import com.unicorn.common.domain.ServiceResponseCode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class RandomGenerateResponseList {
+public class RandomGenerateResponseList implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private List<RandomGenerateResponse> randomResults = new ArrayList<>();
     private String advisoryMessage;

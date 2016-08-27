@@ -2,7 +2,6 @@ package com.unicorn.service.domain;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Request for the random generated response list.

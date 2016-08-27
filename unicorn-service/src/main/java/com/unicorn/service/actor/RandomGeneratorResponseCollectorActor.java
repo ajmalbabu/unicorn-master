@@ -60,13 +60,6 @@ public class RandomGeneratorResponseCollectorActor extends UntypedActor implemen
         expectedNumberOfMessage = parameters.getInteger(EXPECTED_NUMBER_OF_MESSAGE);
     }
 
-
-    @Override
-    public void postParameterSet() {
-
-    }
-
-
     @Override
     public void onReceive(Object message) throws Exception {
 
@@ -94,7 +87,7 @@ public class RandomGeneratorResponseCollectorActor extends UntypedActor implemen
         try {
             this.resultCollection.addRandomResult(result);
             messagesReceived++;
-            log.debug("Messages received so far: {}", messagesReceived);
+            log.info("Messages count received so far: {}", messagesReceived);
 
         } finally {
             transactionIdService.clear();
@@ -110,7 +103,7 @@ public class RandomGeneratorResponseCollectorActor extends UntypedActor implemen
             if (isProcessCompleted()) {
                 sender().tell(resultCollection, ActorRef.noSender());
             } else {
-                String message = "Result collection is not completed, try again after sometime.";
+                String message = "Result collection is not completed, try again after sometime, current count result is: " + messagesReceived;
                 sender().tell(new RandomGenerateResponseList(ServiceResponseCode.RESULT_COLLECTION_INCOMPLETE, message),
                         ActorRef.noSender());
             }

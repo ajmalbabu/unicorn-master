@@ -20,35 +20,39 @@ public class SpringExtension extends AbstractExtensionId<SpringExtension.SpringE
         return new SpringExt();
     }
 
-    public ActorRef actorOf(ActorContext actorContext, String actorName, Parameters actorParameters, String actorLogicalName) {
-        return actorContext.actorOf(get(actorContext.system()).props(actorName, actorParameters), actorLogicalName);
+    public ActorRef actorOf(ActorContext actorContext, String actorSpringBeanName, Parameters actorParameters, String actorLogicalName) {
+        return actorContext.actorOf(get(actorContext.system()).props(actorSpringBeanName, actorParameters), actorLogicalName);
     }
 
-    public ActorRef actorOf(ActorContext actorContext, String actorName, Parameters actorParameters) {
-        return actorContext.actorOf(get(actorContext.system()).props(actorName, actorParameters));
+    public ActorRef actorOf(ActorContext actorContext, String actorSpringBeanName, Parameters actorParameters) {
+        return actorContext.actorOf(get(actorContext.system()).props(actorSpringBeanName, actorParameters));
     }
 
-    public ActorRef actorOf(ActorSystem actorSystem, String actorName, Parameters actorParameters) {
-        return actorSystem.actorOf(get(actorSystem).props(actorName, actorParameters));
+    public ActorRef actorOf(ActorSystem actorSystem, String actorSpringBeanName, Parameters actorParameters) {
+        return actorSystem.actorOf(get(actorSystem).props(actorSpringBeanName, actorParameters));
     }
 
-    public ActorRef actorOf(ActorSystem actorSystem, String actorName) {
-        return actorSystem.actorOf(get(actorSystem).props(actorName));
+    public ActorRef actorOf(ActorSystem actorSystem, String actorSpringBeanName) {
+        return actorSystem.actorOf(get(actorSystem).props(actorSpringBeanName));
     }
 
-    public ActorRef actorOf(ActorSystem actorSystem, String actorName, RouterConfig routerConfig, String dispatcher, String actorLogicalName) {
-        return actorSystem.actorOf(get(actorSystem).props(actorName).withRouter(routerConfig).withDispatcher(dispatcher), actorLogicalName);
-
-    }
-
-    public ActorRef actorOf(ActorSystem actorSystem, String actorName, RouterConfig routerConfig, String dispatcher, Parameters actorParameters, String actorLogicalName) {
-        return actorSystem.actorOf(get(actorSystem).props(actorName, actorParameters).withRouter(routerConfig).withDispatcher(dispatcher), actorLogicalName);
+    public ActorRef actorOf(ActorSystem actorSystem, String actorSpringBeanName, RouterConfig routerConfig, String dispatcher, String actorLogicalName) {
+        return actorSystem.actorOf(get(actorSystem).props(actorSpringBeanName).withRouter(routerConfig).withDispatcher(dispatcher), actorLogicalName);
 
     }
 
+    public ActorRef actorOf(ActorSystem actorSystem, String actorSpringBeanName, RouterConfig routerConfig, String dispatcher, Parameters actorParameters) {
+        return actorSystem.actorOf(get(actorSystem).props(actorSpringBeanName, actorParameters).withRouter(routerConfig).withDispatcher(dispatcher));
 
-    public ActorRef actorOf(ActorSystem actorSystem, String actorName, Parameters actorParameters, String actorLogicalName) {
-        return actorSystem.actorOf(get(actorSystem).props(actorName, actorParameters), actorLogicalName);
+    }
+
+    public ActorRef actorOf(ActorSystem actorSystem, String actorSpringBeanName, RouterConfig routerConfig, String dispatcher, Parameters actorParameters, String actorLogicalName) {
+        return actorSystem.actorOf(get(actorSystem).props(actorSpringBeanName, actorParameters).withRouter(routerConfig).withDispatcher(dispatcher), actorLogicalName);
+
+    }
+
+    public ActorRef actorOf(ActorSystem actorSystem, String actorSpringBeanName, Parameters actorParameters, String actorLogicalName) {
+        return actorSystem.actorOf(get(actorSystem).props(actorSpringBeanName, actorParameters), actorLogicalName);
 
     }
 

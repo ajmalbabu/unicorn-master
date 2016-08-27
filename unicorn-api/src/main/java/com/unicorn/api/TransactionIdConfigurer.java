@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import static com.unicorn.common.service.TransactionIdService.TRANSACTION_ID;
 
 /**
- * Initialize client provided transaction identifier or a unique transaction identifier for every
+ * Initialize client provided bankAccountTransaction identifier or a unique bankAccountTransaction identifier for every
  * request to help on support/debugging/logging.
  */
 

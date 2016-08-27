@@ -38,7 +38,6 @@ public class SpringActorProducer implements IndirectActorProducer {
 
             ParameterInjector parameterInjector = (ParameterInjector) actor;
             parameterInjector.setParameters(parameters);
-            parameterInjector.postParameterSet();
 
         } else {
             if (actor instanceof ParameterInjector) {

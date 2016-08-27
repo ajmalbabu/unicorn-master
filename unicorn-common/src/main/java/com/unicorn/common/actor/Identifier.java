@@ -1,8 +1,5 @@
 package com.unicorn.common.actor;
 
-import java.util.UUID;
-
-
 public class Identifier {
     private String id;
 
@@ -11,8 +8,8 @@ public class Identifier {
     }
 
 
-    public Identifier(UUID id) {
-        this.id = id.toString();
+    public Identifier(String id) {
+        this.id = id;
     }
 
     public void setId(String id) {

@@ -13,6 +13,8 @@ import java.util.UUID;
 public class Parameters {
 
     private static final String SENDER_ACTOR_REF = "SENDER_ACTOR_REF";
+    public static final String PERSISTENCE_ID = "persistenceId";
+
 
     private final Map<String, Object> parameters;
 
@@ -32,8 +34,8 @@ public class Parameters {
         return new Parameters(params);
     }
 
-    public Object get(String key) {
-        return parameters.get(key);
+    public <T> T get(String key) {
+        return (T) parameters.get(key);
     }
 
     public Parameters addSender(ActorRef sender) {
@@ -56,6 +58,7 @@ public class Parameters {
     public Integer getInteger(String param) {
         return (Integer) get(param);
     }
+
 
     public UUID getUuid(String param) {
         return (UUID) get(param);

@@ -1,14 +1,17 @@
 ---
-unicorn:
-  redis:
-    host: localhost
-    port: 6379
-    inmemory: false
+isolate.mode: false
 server:
+  address: localhost
   port: 8082
+redis:
+  host: localhost
+  port: 6379
 management:
-  port: 8082
-spring: 
-  output: 
-    ansi: 
-      enabled: ALWAYS
+  port: 8083
+cassandra:
+  contactPoints: 127.0.0.1
+  port: 9042
+kafka:
+  server: localhost
+  port: 9092
+  bootstrap.servers: localhost:9092

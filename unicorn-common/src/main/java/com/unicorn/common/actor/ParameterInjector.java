@@ -26,12 +26,4 @@ public interface ParameterInjector {
      */
     void setParameters(Parameters parameters);
 
-    /**
-     * Any initialization that you want to perform on this interface's implemented class should
-     * be defined by overriding/implementing this method. If the implementor needs any of the
-     * parameters for proper construction of its instance, such code should be done by overriding/
-     * implementing in ths method. This method is guaranteed to be called after the proper post
-     * initialization of the target implementor that implements this interface.
-     */
-    void postParameterSet();
 }

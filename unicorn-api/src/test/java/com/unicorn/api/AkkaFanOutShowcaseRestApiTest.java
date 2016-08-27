@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {SpringConfig.class})
 @WebIntegrationTest(randomPort = true)
-public class UnicornRestApiTest {
+public class AkkaFanOutShowcaseRestApiTest {
 
     @Value("${local.server.port}")
     private int port;
@@ -28,7 +28,7 @@ public class UnicornRestApiTest {
 
         // Given, When
         Identifier identifier = new TestRestTemplate().getForObject(
-                "http://localhost:" + this.port + "/unicorn-api/v1/random-generate?count=5", Identifier.class);
+                "http://localhost:" + this.port + "/unicorn-api/v1/fan-out-random-generate?count=5", Identifier.class);
 
         // Then
         assertThat(identifier).isNotNull();
@@ -41,11 +41,11 @@ public class UnicornRestApiTest {
         // Given
         TestRestTemplate testRestTemplate = new TestRestTemplate();
         Identifier identifier = testRestTemplate.getForObject(
-                "http://localhost:" + this.port + "/unicorn-api/v1/random-generate?count=5", Identifier.class);
+                "http://localhost:" + this.port + "/unicorn-api/v1/fan-out-random-generate?count=5", Identifier.class);
 
         // When
         RandomGenerateResponseList responseList = testRestTemplate.getForObject(
-                "http://localhost:" + this.port + "/unicorn-api/v1/random-generate-response?identifier=" + identifier.getId(), RandomGenerateResponseList.class);
+                "http://localhost:" + this.port + "/unicorn-api/v1/fan-out-random-generate-response?id=" + identifier.getId(), RandomGenerateResponseList.class);
 
         // Then
         assertThat(responseList.getRandomResults().size()).isEqualTo(5);

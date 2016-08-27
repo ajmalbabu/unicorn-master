@@ -7,12 +7,11 @@ import scala.concurrent.Await;
 import scala.concurrent.Future;
 
 import java.io.Serializable;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
- * To keep track of actor identity and would help to contact the actor at a later stage.
+ * To keep track of actor identity and would help to crate the actor at a later stage.
  * </p>
  */
 public class ActorInfo implements Serializable {
@@ -32,24 +31,29 @@ public class ActorInfo implements Serializable {
 
     private String actorPath;
 
-    private UUID actorName;
+    private String actorName;
 
-    public ActorInfo(UUID actorName) {
+    public ActorInfo(String actorName) {
+        this(DEFAULT_ACTOR_PATH, actorName);
+    }
+
+    public ActorInfo(String actorPath, String actorName) {
+        this.actorPath = actorPath;
         this.actorName = actorName;
     }
 
-    public ActorInfo(String actorSystemName, boolean isRemoteActor, String hostName, String portNumber, UUID actorName) {
-        this(actorSystemName, isRemoteActor, hostName, portNumber, DEFAULT_ACTOR_PATH, actorName);
+    public ActorInfo(String actorName, String actorSystemName, boolean isRemoteActor, String hostName, String portNumber) {
+        this(DEFAULT_ACTOR_PATH, actorName, actorSystemName, isRemoteActor, hostName, portNumber);
     }
 
-    public ActorInfo(String actorSystemName, boolean isRemoteActor, String hostName, String portNumber, String actorPath, UUID actorName) {
+    public ActorInfo(String actorPath, String actorName, String actorSystemName, boolean isRemoteActor, String hostName, String portNumber) {
 
+        this.actorPath = actorPath;
+        this.actorName = actorName;
         this.actorSystemName = actorSystemName;
         this.isRemoteActor = isRemoteActor;
         this.hostName = hostName;
         this.portNumber = portNumber;
-        this.actorPath = actorPath;
-        this.actorName = actorName;
     }
 
     public String getActorSystemName() {
@@ -92,17 +96,19 @@ public class ActorInfo implements Serializable {
         this.actorPath = actorPath;
     }
 
-    public void setActorName(UUID actorName) {
+    public void setActorName(String actorName) {
         this.actorName = actorName;
     }
 
-    public UUID getActorName() {
+    public String getActorName() {
         return actorName;
     }
 
     /**
-     * @param actorSystem The system to retrieve the actor from
-     * @return Returns the Actor for the provided actor ID
+     * Retrieves the actor using the actor system and actor info in this class.
+     *
+     * @param actorSystem The system to retrieve the actor from.
+     * @return Returns the Actor for the actor id.
      */
     public ActorRef actor(ActorSystem actorSystem) {
         ActorSelection actorSelection = actorSelection(actorSystem);
@@ -128,9 +134,9 @@ public class ActorInfo implements Serializable {
     private ActorSelection actorSelection(ActorSystem actorSystem) {
 
         if (isRemoteActor) {
-            return actorSystem.actorSelection("akka.tcp://" + actorSystemName + "@" + hostName + ":" + portNumber + "/" + actorPath + "/" + actorName.toString());
+            return actorSystem.actorSelection("akka.tcp://" + actorSystemName + "@" + hostName + ":" + portNumber + "/" + actorPath + "/" + actorName);
         }
-        return actorSystem.actorSelection("/user/" + actorName.toString());
+        return actorSystem.actorSelection("/" + actorPath + "/" + actorName);
 
     }
 
@@ -141,12 +147,12 @@ public class ActorInfo implements Serializable {
     @Override
     public String toString() {
         return "ActorInfo{" +
-                "hostName='" + hostName + '\'' +
+                "isRemoteActor=" + isRemoteActor +
+                ", actorSystemName='" + actorSystemName + '\'' +
+                ", hostName='" + hostName + '\'' +
                 ", portNumber='" + portNumber + '\'' +
                 ", actorPath='" + actorPath + '\'' +
-                ", actorName=" + actorName +
+                ", actorName='" + actorName + '\'' +
                 '}';
     }
-
-
 }

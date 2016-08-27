@@ -1,6 +1,7 @@
 package com.unicorn.api;
 
 import com.unicorn.common.actor.ActorInfo;
+import com.unicorn.common.actor.Identifier;
 import com.unicorn.common.service.CacheService;
 import com.unicorn.service.RandomService;
 import com.unicorn.service.domain.RandomGenerateResponseList;
@@ -15,14 +16,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
+/**
+ * Show-case how to implement Fan Out using AKKA.
+ * 1. API calls to create a fan out process.
+ * 2. And another API can collect the results.
+ */
 @RestController
 @RequestMapping("/v1")
 @Profile({"local", "unit-test", "dev", "qa", "prod"})
-public class UnicornRestApi {
+public class AkkaFanOutShowcaseRestApi {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UnicornRestApi.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AkkaFanOutShowcaseRestApi.class);
 
     @Autowired
     private RandomService randomService;
@@ -31,8 +35,8 @@ public class UnicornRestApi {
     private CacheService cacheService;
 
 
-    @RequestMapping(value = "random-generate", method = RequestMethod.GET)
-    public ResponseEntity<?> randomGenerate(@RequestParam(name = "count") Integer count) {
+    @RequestMapping(value = "fan-out-random-generate", method = RequestMethod.GET)
+    public ResponseEntity<Identifier> fanOutRandomGenerate(@RequestParam(name = "count") Integer count) {
 
         LOGGER.info("Started random generate method.");
 
@@ -46,8 +50,8 @@ public class UnicornRestApi {
 
     }
 
-    @RequestMapping(value = "random-generate-response", method = RequestMethod.GET)
-    public ResponseEntity<?> randomGenerateResponse(@RequestParam(name = "id") UUID id) {
+    @RequestMapping(value = "fan-out-random-generate-response", method = RequestMethod.GET)
+    public ResponseEntity<RandomGenerateResponseList> fanOutRandomGenerateResponse(@RequestParam(name = "id") String id) {
 
         LOGGER.info("Started random generate response method.");
 

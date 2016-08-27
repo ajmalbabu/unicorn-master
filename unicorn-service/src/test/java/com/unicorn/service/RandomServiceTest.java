@@ -12,9 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Created by e120768 on 8/8/2016.
- */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = SpringConfig.class)
 public class RandomServiceTest {
@@ -45,8 +43,13 @@ public class RandomServiceTest {
 
         // Then
         assertThat(responseList).isNotNull();
-        assertThat(responseList.getRandomResults().size()).isEqualTo(5);
-        assertThat(responseList.getAdvisoryMessage()).isNull();
-        assertThat(responseList.getServiceResponseCode()).isEqualTo(ServiceResponseCode.OK);
+        if (responseList.getRandomResults().size() > 0) {
+            assertThat(responseList.getRandomResults().size()).isEqualTo(5);
+            assertThat(responseList.getAdvisoryMessage()).isNull();
+            assertThat(responseList.getServiceResponseCode()).isEqualTo(ServiceResponseCode.OK);
+        } else {
+            assertThat(responseList.getAdvisoryMessage()).contains("Result collection is not completed, try again after sometime");
+            System.out.println(responseList.getAdvisoryMessage());
+        }
     }
 }

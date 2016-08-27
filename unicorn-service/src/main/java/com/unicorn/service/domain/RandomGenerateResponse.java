@@ -1,9 +1,12 @@
 package com.unicorn.service.domain;
 
+import java.io.Serializable;
 import java.util.Map;
 
 
-public class RandomGenerateResponse {
+public class RandomGenerateResponse implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Map<String, Object> mdc;
     private int value;

@@ -65,6 +65,7 @@ public class FlightEventListener {
 
     private void registerListener(final KafkaConsumer<String, String> consumer) {
 
+        // TODO Assign a thread-pool for Kafka listeners and use threads from there instead of using random threads.
         new Thread(new Runnable() {
             @Override
             public void run() {

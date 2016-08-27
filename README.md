@@ -177,7 +177,7 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 2. Add mechanism to close old/unused actors in each generate re-submission.
 3. Remove default serializers in AKKA.
 4. When flight event is published to Kafka and if Kafka is not running at that time, it is blokcing the REST request.
-5. TODO Assign a thread-pool for Kafka listeners and use threads from there instead of using random threads.
+5. TODO Assign a thread-pool for Kafka listeners and use threads from there instead of using random threads. FlightEventListener.java
 
 
 

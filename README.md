@@ -13,7 +13,7 @@
     1. Then edit configuration and provide the following values according to the local path on your machine and rerun the application again
     ```
     -Xbootclasspath/p:C:\software\workspace\unicorn-master\unicorn-configuration
-    -Dspring.profiles.active=local,server
+    -Dspring.profiles.active=local,isolate
     ```
 
 ### Fan-out using AKKA actors usage example.
@@ -63,9 +63,9 @@ http://127.0.0.1:8082/unicorn-api/v1/bankAccount?bankAccountName=Jon
 4. Persistence actors are using LevelDB as persistent storage, it can be changed by switching maven dependency to point to Cassandra storage and update AKKA configuration for better resiliency.
 5. Persistence actors has a bunch of unit-test cases and those one uses in memory persistence storage. Checkout the test cases.
 
-### isolation.mode explained.
+### isolate profile explained.
 
-1. System in production can use REDIS (for cache) and Cassandra (as database, coming more on this later). But it can work without having both of these instance available and it will use in-memory cache and none of the database access code will not work but application will come up and all other parts are available for access. Its possible because system is configured by default to run in isolate.mode: "true" in local laptop and this flag is set in unicorn-configuration/appllication-local.yaml file. This mode can be changed to "false" once REDIS and Cassandra are installed. See the steps later. 
+1. System in production can use REDIS (for cache) and Cassandra (as database, coming more on this later). But it can work without having both of these instance available and it will use in-memory cache and none of the cassandra database access code will not work but application will come up and all other parts are available for access. Its possible because system is configured by default to run with **isolate** profile in local laptop and this is set during system startup look at start up parameters. This mode can be removed by taking out **isolate** profile during startup once REDIS and Cassandra are installed. See the steps later. 
 2. REDIS for microsoft windows - download and install MSI  https://github.com/MSOpenTech/redis/releases this would automatically start REDIS as a windows service at localhost:6379. To change any of the default configuration read the documentation that comes with installation "Windows Service Documentation.docx"
 3. REDIS can be accessed using Jedis/lettuce API Jedis jar is packaged along with the application and a redisTemplate with name 'primaryRedisTemplate' is configured and ready to use. 
 
@@ -86,7 +86,7 @@ http://127.0.0.1:8082/unicorn-api/v1/bankAccount?bankAccountName=Jon
     select * from flight
 ```
 4. Cassandra end point can be tested by issuing a HTTP get request http://127.0.0.1:8082/unicorn-api/v1/flight
-5. Once Cassandra & REDIS is running in the above PORT, restart the Application by changing "isolate.mode: true" in unicorn-configuration/application-local.yaml file. Now Spring would connect to REDIS & Cassandra severs instead of in-memory cache & with  real column families. A log would appear in the application log that says connecting to REDIS cache.
+5. Once Cassandra & REDIS is running in the above PORT, restart the Application by removing "isolate" profile in the start-up JVM arguments. Now Spring would connect to REDIS & Cassandra severs instead of in-memory cache & with  real column families. A log would appear in the application log that says connecting to REDIS cache.
 
 ### Kafka example usage and installation on windows
 
@@ -125,10 +125,11 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 ### Other best practices
 
 1. Supports spring Profiles concept, default profile can be extended with "local", "dev", "qa" or "prod" profiles.
-    1. Default profile configuration are kept in unicorn-configuration/application.yaml file and this file gets included by default. All the default spring beans (which does not have any @Profile annotation) gets included in start-up. 
-    2. A sample "local" profile for local laptop based development is available and corresponding configuration file for this profile is unicorn-configuration/application-local.yaml file. To use this profile at start up provide -Dspring.profiles.active=local. All the default spring beans (which does not have any @Profile annotation) and spring beans with @Profile("local") gets included in start-up. Similar concept can be followed for other environments e.g. "dev", "qa" or "prod".
-    3. If certain bean need to be only activated during a certain profile execution it can be controlled via @Profile annotation on that bean. Such an example is available in UnicornRestApi.java - in this case it is enabled for all profiles.
-    4. During unit-testing "unit-test" profile can be activated by adding a java runtime parameter -Dspring.profiles.active=unit-test or by adding the profile in the unit-test in the test/resources/application.yaml file, take a look at any such yaml file under test/resources folder for an example. When unit-test profile is enabled all default beans (which does not have any @Profile annotation) gets activated and all beans marked with @Profile("unit-test") gets activated. 
+    1. Spring profile configuration are supplied in the JVM startup argument. For local laptop development in isolation mode, provide the following profiles "local, isolate" as explained earlier in startup arguments.  All the default spring beans (which does not have any @Profile annotation) gets included in start-up and any beans with @Profile("local") & @Profile("isolate") gets included as well. 
+    2. The corresponding configuration file for local profile file is unicorn-configuration/application-local.yaml file.
+    3. If certain bean need to be only activated during a certain profile execution it can be controlled via @Profile annotation. Such an example is available in CacheManagerConfiguration.java
+    4. Refer to isolate profile explained section above for laptop based isolate development.
+    4. Refer to isolate profile explained section above for laptop based isolate development.
 2. Supports TDD using Spring and Junit along with integration test cases using spring integration test support to test end to end. Example test classes are available in the "test" folder. 
     1. Another important unit test feature available is to avoid duplicating of source code & resources file during unit testing. If module A depends on module B and module B's test folder has source code and configuration file needed for B's unit testing, all such configuration and code in test from module B is available to module A unit testing without duplicating those files into module A test folder. This is possible by declaring "test-jar" at "test" scope dependency in module A. An example can be found at unicorn-api's pom file for a dependency into unicorn-service module.  
     2. Cassandra unit testing is challenging as the cassandra-unit test libraries is inactive. All Cassandra testing is performed using mockito by mocking Dao code. Look at FlightServiceTest.java
@@ -151,23 +152,24 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 ### Todo
 
 1. ~~Cleanup maven - remove unused artifacts.~~
-2. ~~Implement isolate.mode for local and unit-testing support in all these below  without having hard dependency on any of the below for local development.~~
+2. ~~Implement isolate profile for local and unit-testing support in all these below  without having hard dependency on any of the below for local development.~~
 3. ~~Add Cassandra.~~
 4. ~~Add REDIS as Cache storage~~
 5. ~~Add Kafka.~~  
 6.  Add test support for Kafka through embedded kafka if not possible via Mockito
-7. Add RDBMS.
-8. ~~Add Akka persistence with Junit Testing.~~
-9. Create some examples to use REDIS using spring-data REDIS.
-10. Create IONIC with angular - 2 front end with few screens which access RDBMS back-end with spring REST end points. Also evaluate Kendo-UI components.
-11. Create installable in IONIC for Android & iOS devices and upload into App-store.
-12. Create Hashicorp - Terra-form for AWS Cloud formation template with Chef scripts to deploy these into AWS with elasticity & auto scaling feature.
-13. Integrate with Cloud-bees for CI/CD.
-14. Use docker using Hashicorp - Packer.
-15. Create a new fork form all the above project based on our needs using DDD style by bounded contexts.
-16. Consideration for out of order processing - e.g. flight cancel came first and then came flight time update. (depend on the timestamp of message?). 
-17. Implement timeout for remote calls database, cache, redis, cassandra etc.
-18. Implement throttling using hysterix.
+7. Implement Cluster sharding.
+8. Add RDBMS.
+9. ~~Add Akka persistence with Junit Testing.~~
+10. Create some examples to use REDIS using spring-data REDIS.
+11. Create IONIC with angular - 2 front end with few screens which access RDBMS back-end with spring REST end points. Also evaluate Kendo-UI components.
+12. Create installable in IONIC for Android & iOS devices and upload into App-store.
+13. Create Hashicorp - Terra-form for AWS Cloud formation template with Chef scripts to deploy these into AWS with elasticity & auto scaling feature.
+14. Integrate with Cloud-bees for CI/CD.
+15. Use docker using Hashicorp - Packer.
+16. Create a new fork form all the above project based on our needs using DDD style by bounded contexts.
+17. Consideration for out of order processing - e.g. flight cancel came first and then came flight time update. (depend on the timestamp of message?). 
+18. Implement timeout for remote calls database, cache, redis, cassandra etc.
+19. Implement throttling using hysterix.
 
 #### Minor Todo
 

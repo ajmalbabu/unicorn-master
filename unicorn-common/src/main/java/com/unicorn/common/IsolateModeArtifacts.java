@@ -3,16 +3,18 @@ package com.unicorn.common;
 import com.datastax.driver.core.*;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.springframework.cassandra.config.CassandraCqlSessionFactoryBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.cassandra.config.CassandraSessionFactoryBean;
 import org.springframework.data.util.ReflectionUtils;
 
 /**
  * <p>
  * Classes here makes it possible to run without real Cassandra or REDIS up and running.
- * Very useful while running Rapid on laptop, use -Disolate.mode=true to enable this in
- * yaml file or as a -D JVM argument.
+ * Very useful while running Rapid on laptop, e.g. JVM argument -Dspring.profiles.active=local,isolate
+ * profile.
  * </p>
  */
+@Profile("isolate")
 class IsolateModeArtifacts extends CassandraSessionFactoryBean {
 
     static class CassandraCqlSessionFactoryBeanFake extends CassandraCqlSessionFactoryBean {

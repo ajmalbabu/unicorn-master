@@ -1,13 +1,4 @@
 ---
-isolate.mode: true
-spring.profiles.active: common-test,service-test
+spring.profiles.active: isolate,common-test,service-test
 server:
   context-path: /unicorn-api
-#kafka:
-#  flight.event:
-#    producerConfig:
-#      key.serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value.serializer: org.apache.kafka.common.serialization.StringSerializer
-#    consumerConfig:
-#      key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value.deserializer: org.apache.kafka.common.serialization.StringDeserializer

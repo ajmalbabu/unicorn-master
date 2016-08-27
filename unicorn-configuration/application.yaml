@@ -1,7 +1,4 @@
 ---
-global:
-  # This is false by default, system ahould accept control mesages to shutdown itself. (not implmented).
-  shutDownHook: false
 server:
   context-path: /unicorn-api
 management:
@@ -12,6 +9,9 @@ security:
   user:
     name: admin
     password: unicorn_admin
+global:
+  # This is false by default, system ahould accept control mesages to shutdown itself. (not implmented).
+  shutDownHook: false
 spring:
   output:
     ansi:

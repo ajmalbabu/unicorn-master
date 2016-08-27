@@ -5,11 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.guava.GuavaCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -25,8 +25,6 @@ public class CacheManagerConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CacheManagerConfiguration.class);
 
-    @Value("${isolate.mode:false}")
-    private boolean isolateMode;
 
     @Autowired
     @Qualifier(value = "primaryRedisTemplate")
@@ -34,14 +32,17 @@ public class CacheManagerConfiguration {
 
 
     @Bean
+    @Profile("!isolate")
     public CacheManager sessionCacheManager() {
-        if (isolateMode) {
-            LOGGER.info("Using in-memory cache.");
-            return inMemoryCacheManager();
-        } else {
-            LOGGER.info("Using REDIS cache.");
-            return new RedisCacheManager(primaryRedisTemplate);
-        }
+        LOGGER.info("Using REDIS cache.");
+        return new RedisCacheManager(primaryRedisTemplate);
+    }
+
+    @Bean
+    @Profile("isolate")
+    public CacheManager sessionCacheManagerIsolate() {
+        LOGGER.info("Using in-memory cache.");
+        return inMemoryCacheManager();
     }
 
     /**

@@ -1,3 +1,2 @@
 ---
-isolate.mode: true
-spring.profiles.active: common-test
+spring.profiles.active: isolate,common-test

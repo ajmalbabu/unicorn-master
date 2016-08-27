@@ -1,0 +1,21 @@
+---
+akka:
+  actor:
+    system.name: UnicornActorSystem
+    # Whether to enable remoting capabilty to "random service actor"
+    random.service:
+      remote:
+        enable: false
+        bind:
+          port: 8995
+          host: localhost
+  config: unicorn.akka.conf
+kafka:
+  flight.event:
+    producerConfig:
+      key.serializer: org.apache.kafka.common.serialization.StringSerializer
+      value.serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumerConfig:
+      key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+

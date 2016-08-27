@@ -1,5 +1,5 @@
 ---
-isolate.mode: false
+isolate.mode: true
 server:
   address: localhost
   port: 8082
@@ -12,6 +12,4 @@ cassandra:
   contactPoints: 127.0.0.1
   port: 9042
 kafka:
-  server: localhost
-  port: 9092
   bootstrap.servers: localhost:9092

@@ -111,14 +111,14 @@
         <!--&lt;!&ndash; Spring Kafka client &ndash;&gt;-->
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.kafka</groupId>-->
-            <!--<artifactId>spring-kafka</artifactId>-->
+        <!--<groupId>org.springframework.kafka</groupId>-->
+        <!--<artifactId>spring-kafka</artifactId>-->
         <!--</dependency>-->
 
 
         <!--<dependency>-->
-            <!--<groupId>org.springframework.kafka</groupId>-->
-            <!--<artifactId>spring-kafka-test</artifactId>-->
+        <!--<groupId>org.springframework.kafka</groupId>-->
+        <!--<artifactId>spring-kafka-test</artifactId>-->
         <!--</dependency>-->
 
 

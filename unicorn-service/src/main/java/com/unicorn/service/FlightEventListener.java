@@ -23,7 +23,7 @@ public class FlightEventListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlightEventListener.class);
 
-    @Value("${kafka.bootstrap.servers}")
+    @Value("${kafka.bootstrap.servers:localhost:9092}")
     private String bootstrapServers;
 
     @Value("${kafka.flight.event.topic:flightEventTopic}")
@@ -53,7 +53,6 @@ public class FlightEventListener {
     @PostConstruct
     public void postConstruct() throws InterruptedException {
 
-        System.out.println("\n\r pollIntervalMs: " + pollIntervalMs);
 
         consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         kafkaConsumer = new KafkaConsumer<String, String>(consumerConfig);
@@ -65,8 +64,6 @@ public class FlightEventListener {
     }
 
     private void registerListener(final KafkaConsumer<String, String> consumer) {
-
-        // TODO Assign a thread-pool for listeners and use threads from there instead of using random threads.
 
         new Thread(new Runnable() {
             @Override

@@ -25,7 +25,7 @@ public class FlightEventPublishService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlightEventPublishService.class);
 
-    @Value("${kafka.bootstrap.servers}")
+    @Value("${kafka.bootstrap.servers:localhost:9092}")
     private String bootstrapServers;
 
     @Value("${kafka.flight.event.topic:flightEventTopic}")

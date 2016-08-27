@@ -1,0 +1,11 @@
+---
+redis:
+  database: 0
+  minIdleConnections: 1
+  maxIdleConnections: 5
+  maxTotalConnections: 10
+  host: 127.0.0.1
+  port: 8080
+  timeout: 10000
+cassandra:
+  keySpace: cep

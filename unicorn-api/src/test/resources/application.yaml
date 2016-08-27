@@ -1,4 +1,5 @@
 ---
+isolate.mode: true
 spring:
   profiles:
     active: unit-test

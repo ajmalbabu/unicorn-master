@@ -1,4 +1,5 @@
 ---
+isolate.mode: true
 server:
   address: localhost
   port: 8082

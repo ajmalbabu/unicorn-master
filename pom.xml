@@ -169,10 +169,12 @@
                 <version>${typesafe.config.version}</version>
             </dependency>
 
+            <!-- For testing in memory persistence storage -->
             <dependency>
                 <groupId>org.dmonix.akka</groupId>
                 <artifactId>akka-persistence-mock_2.11</artifactId>
                 <version>${akka.persistence.mock.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Replace below level DB with Cassandra for production for AKKA persistence -->

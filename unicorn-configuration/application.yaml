@@ -1,6 +1,6 @@
 ---
 global:
-  # This is false by default, system accepts control mesages to shutdown itself. (not implmented).
+  # This is false by default, system ahould accept control mesages to shutdown itself. (not implmented).
   shutDownHook: false
 server:
   context-path: /unicorn-api
@@ -19,13 +19,12 @@ spring:
 akka:
   actor:
     system.name: UnicornActorSystem
-    # Whether to enable remoting capabilty to "random service actor"
-    random.service:
-      remote:
-        enable: false
-        bind:
-          port: 8995
-          host: localhost
+    # Whether to enable remoting capabilty to actors
+    remote:
+      enable: false
+      bind:
+        port: 8995
+        host: localhost
   config: unicorn.akka.conf
 redis:
   database: 0

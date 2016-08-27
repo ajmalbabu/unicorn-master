@@ -83,6 +83,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- For testing in memory persistence storage -->
+        <dependency>
+            <groupId>org.dmonix.akka</groupId>
+            <artifactId>akka-persistence-mock_2.11</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.general</groupId>
             <artifactId>unicorn-common</artifactId>
@@ -102,6 +108,17 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

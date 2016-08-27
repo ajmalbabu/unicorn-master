@@ -1,0 +1,12 @@
+---
+# All properties for service module unit testing is here. This configuration file is reusable to all modules that
+# depends on servie module without duplicating properties in those module's test cases, simply declare below in
+# their application.yaml file  spring.profiles.active: service-test
+kafka:
+  flight.event:
+    producerConfig:
+      key.serializer: org.apache.kafka.common.serialization.StringSerializer
+      value.serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumerConfig:
+      key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value.deserializer: org.apache.kafka.common.serialization.StringDeserializer

@@ -74,8 +74,8 @@ public class RandomService {
 
         LOGGER.trace("Initiated random generator for transaction {} with collector: {}", transactionId, collectorActorName);
 
-        return new ActorInfo(collectorActorName.toString(), akkaProperties.getUnicornActorSystem(), akkaProperties.isRandomServiceActorRemoteEnable(),
-                akkaProperties.getRandomServiceActorRemoteBindHost(), akkaProperties.getRandomServiceActorRemoteBindPort());
+        return new ActorInfo(collectorActorName.toString(), akkaProperties.getUnicornActorSystem(), akkaProperties.isActorRemoteEnable(),
+                akkaProperties.getActorRemoteBindHost(), akkaProperties.getActorRemoteBindPort());
     }
 
     public RandomGenerateResponseList randomGenerateResponse(ActorInfo actorInfo) {

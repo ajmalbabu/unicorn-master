@@ -63,6 +63,7 @@
             <artifactId>leveldbjni-all</artifactId>
         </dependency>
 
+        <!-- For testing in memory persistence storage -->
         <dependency>
             <groupId>org.dmonix.akka</groupId>
             <artifactId>akka-persistence-mock_2.11</artifactId>

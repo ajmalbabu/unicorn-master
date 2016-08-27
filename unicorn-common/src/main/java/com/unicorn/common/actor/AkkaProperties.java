@@ -21,8 +21,8 @@ import javax.annotation.PostConstruct;
 @ConfigurationProperties(prefix = "akka", ignoreUnknownFields = true)
 public class AkkaProperties {
 
-    public static final String AKKA_REMOTE_NETTY_TCP_PORT = "akka.remote.netty.tcp.port";
     public static final String AKKA_REMOTE_NETTY_TCP_HOSTNAME = "akka.remote.netty.tcp.hostname";
+    public static final String AKKA_REMOTE_NETTY_TCP_PORT = "akka.remote.netty.tcp.port";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AkkaProperties.class);
 
@@ -32,14 +32,14 @@ public class AkkaProperties {
     @Value("${config:unicorn.akka.conf}")
     private String unicornAkkaConf;
 
-    @Value("${actor.random.service.remote.enable:false}")
-    private boolean randomServiceActorRemoteEnable;
+    @Value("${actor.remote.enable:false}")
+    private boolean actorRemoteEnable;
 
-    @Value("${actor.random.service.remote.bind.port:8995}")
-    private String randomServiceActorRemoteBindPort;
+    @Value("${actor.remote.bind.port:localhost}")
+    private String actorRemoteBindHost;
 
-    @Value("${actor.random.service.remote.bind.port:localhost}")
-    private String randomServiceActorRemoteBindHost;
+    @Value("${actor.remote.bind.port:8995}")
+    private String actorRemoteBindPort;
 
     @Autowired
     private SpringExtension springExtension;
@@ -51,8 +51,8 @@ public class AkkaProperties {
 
 
     @PostConstruct
-    public void createActorSystem() {
-        LOGGER.debug("\n\n" + unicornActorSystem + randomServiceActorRemoteEnable + randomServiceActorRemoteBindHost + randomServiceActorRemoteBindPort);
+    public void postConstruct() {
+        LOGGER.debug("\n\n" + unicornActorSystem + actorRemoteEnable + actorRemoteBindHost + actorRemoteBindPort);
         actorSystem = ActorSystem.create(unicornActorSystem, createConfig());
         springExtension.get(actorSystem).initialize(applicationContext);
         LOGGER.debug("Created actor system: {}", actorSystem);
@@ -62,15 +62,15 @@ public class AkkaProperties {
     private Config createConfig() {
         Config config = ConfigFactory.empty();
 
-        if (isRandomServiceActorRemoteEnable()) {
+        if (isActorRemoteEnable()) {
 
-            LOGGER.info("Enable remote actor is ON Create Actor system with host: {}", getRandomServiceActorRemoteBindHost());
+            LOGGER.info("Enable remote actor on host: {}", getActorRemoteBindHost());
 
-            config = config.withFallback(ConfigFactory.parseString(AKKA_REMOTE_NETTY_TCP_HOSTNAME + " = " + getRandomServiceActorRemoteBindHost()));
+            config = config.withFallback(ConfigFactory.parseString(AKKA_REMOTE_NETTY_TCP_HOSTNAME + " = " + getActorRemoteBindHost()));
 
-            LOGGER.info("Create remote Actor system with remote port: {}", getRandomServiceActorRemoteBindPort());
+            LOGGER.info("Create remote Actor system on remote port: {}", getActorRemoteBindPort());
 
-            config = config.withFallback(ConfigFactory.parseString(AKKA_REMOTE_NETTY_TCP_PORT + " = " + getRandomServiceActorRemoteBindPort()))
+            config = config.withFallback(ConfigFactory.parseString(AKKA_REMOTE_NETTY_TCP_PORT + " = " + getActorRemoteBindPort()))
                     .withFallback(ConfigFactory.parseString("akka.actor.provider = akka.remote.RemoteActorRefProvider"));
         }
 
@@ -89,16 +89,16 @@ public class AkkaProperties {
         return unicornActorSystem;
     }
 
-    public boolean isRandomServiceActorRemoteEnable() {
-        return randomServiceActorRemoteEnable;
+    public boolean isActorRemoteEnable() {
+        return actorRemoteEnable;
     }
 
-    public String getRandomServiceActorRemoteBindHost() {
-        return randomServiceActorRemoteBindHost;
+    public String getActorRemoteBindHost() {
+        return actorRemoteBindHost;
     }
 
-    public String getRandomServiceActorRemoteBindPort() {
-        return randomServiceActorRemoteBindPort;
+    public String getActorRemoteBindPort() {
+        return actorRemoteBindPort;
     }
 
     public ActorSystem getActorSystem() {

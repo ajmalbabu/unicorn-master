@@ -65,8 +65,8 @@
 
         <msg.pack.version>0.6.12</msg.pack.version>
         <jackson.dataformat.msgpack.version>0.8.9</jackson.dataformat.msgpack.version>
+        <kafka.version>0.10.0.1</kafka.version>
 
-        <kafka.client.version>0.10.0.1</kafka.client.version>
 
     </properties>
 
@@ -385,12 +385,6 @@
                 <groupId>org.msgpack</groupId>
                 <artifactId>jackson-dataformat-msgpack</artifactId>
                 <version>${jackson.dataformat.msgpack.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka-clients</artifactId>
-                <version>${kafka.client.version}</version>
             </dependency>
 
 

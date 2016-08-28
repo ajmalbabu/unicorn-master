@@ -110,7 +110,7 @@ bin\windows\kafka-topics.bat --create --zookeeper localhost:2181 --replication-f
 ```
 bin\windows\kafka-topics.bat --list flightEventTopic --zookeeper localhost:2181
 ```
-9. Submit the below HTTP post URL to submit a flight message into the system, this message from API layer will be send to the above Kafka Topic and there is another listener that listens for this message and prints it on the console.
+9. Submit the below HTTP POST URL to submit a flight message into the system, this message from API layer will be send to the above Kafka Topic and there is another listener that listens for this message and prints it on the console.
 ```
 http://127.0.0.1:8082/unicorn-api/v1/flight
 with below json payload - make sure to set the HTTP header "Content-Type" to "application/json" in postman

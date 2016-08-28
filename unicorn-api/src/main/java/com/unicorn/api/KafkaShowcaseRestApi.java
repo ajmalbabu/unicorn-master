@@ -29,7 +29,7 @@ public class KafkaShowcaseRestApi {
     /**
      * Send the message to the Kafka service for publishing.
      */
-    @RequestMapping(value = "flight", method = RequestMethod.PUT)
+    @RequestMapping(value = "flight", method = RequestMethod.POST)
     public ResponseEntity<String> submitFlightEvent(@RequestBody FlightEvent flightEvent) throws Exception {
 
         LOGGER.info("API received the flight event.");

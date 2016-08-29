@@ -5,8 +5,10 @@ import com.unicorn.common.domain.ServiceResponseCode;
 import com.unicorn.service.SpringConfig;
 import com.unicorn.service.domain.RandomGenerateResponseList;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.boot.test.WebIntegrationTest;
@@ -15,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
+@Category(IntegrationTest.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {SpringConfig.class})
 @WebIntegrationTest(randomPort = true)

@@ -4,6 +4,8 @@ import com.datastax.driver.core.Row;
 import com.datastax.driver.core.exceptions.DriverException;
 import com.unicorn.common.CassandraConfiguration;
 import com.unicorn.service.domain.Flight;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cassandra.core.CqlOperations;
 import org.springframework.cassandra.core.RowMapper;
@@ -14,6 +16,8 @@ import java.util.List;
 
 @Component
 public class FlightDao {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlightDao.class);
 
     @Autowired
     private CassandraConfiguration cassandraConfiguration;
@@ -29,6 +33,10 @@ public class FlightDao {
         String query = String.format("select * from %s.%s;", cassandraConfiguration.getKeyspaceName(), "flight");
         flightList = cqlOperations.query(query, new FlightRowMapper());
         return flightList;
+    }
+
+    public void save(String flightEvent) {
+        LOGGER.info("Persist flight event: {}", flightEvent);
     }
 
     static class FlightRowMapper implements RowMapper {

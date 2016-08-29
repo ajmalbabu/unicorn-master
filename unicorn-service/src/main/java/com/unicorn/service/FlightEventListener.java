@@ -1,12 +1,14 @@
 package com.unicorn.service;
 
 
+import com.unicorn.service.dao.FlightDao;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,11 +34,14 @@ public class FlightEventListener {
     @Value("${kafka.flight.event.partition:0}")
     private int flightEventTopicPartition;
 
-    @Value("${kafka.flight.event.pollIntervalMs:0}")
+    @Value("${kafka.flight.event.pollIntervalMs:101}")
     private long pollIntervalMs;
 
     @Value("${global.shutDownHook:false}")
     private boolean shutDownHook;
+
+    @Autowired
+    private FlightDao flightDao;
 
     private Properties consumerConfig = new Properties();
 
@@ -85,6 +90,8 @@ public class FlightEventListener {
 
                 LOGGER.info("Received flight event key: {}, offset: {}, message: {}"
                         , record.key(), record.offset(), record.value());
+
+                flightDao.save(record.value());
             }
 
         }

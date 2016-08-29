@@ -1,8 +1,8 @@
 package com.unicorn.service;
 
 import com.unicorn.common.domain.FlightEvent;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +21,12 @@ import java.util.Properties;
 @Service
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "kafka.flight.event")
-public class FlightEventPublishService {
+public class FlightEventPublisher {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FlightEventPublishService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlightEventPublisher.class);
 
     @Value("${kafka.bootstrap.servers:localhost:9092}")
-    private String bootstrapServers;
+    private String kafkaBootstrapServers;
 
     @Value("${kafka.flight.event.topic:flightEventTopic}")
     private String flightEventTopic;
@@ -48,7 +48,7 @@ public class FlightEventPublishService {
 
     @PostConstruct
     public void postConstruct() {
-        producerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServers);
         kafkaProducer = new KafkaProducer<String, String>(producerConfig);
     }
 

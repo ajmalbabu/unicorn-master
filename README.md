@@ -129,10 +129,11 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
     2. The corresponding configuration file for local profile file is unicorn-configuration/application-local.yaml file.
     3. If certain bean need to be only activated during a certain profile execution it can be controlled via @Profile annotation. Such an example is available in CacheManagerConfiguration.java
     4. Refer to isolate profile explained section above for laptop based isolate development.
-    4. Refer to isolate profile explained section above for laptop based isolate development.
 2. Supports TDD using Spring and Junit along with integration test cases using spring integration test support to test end to end. Example test classes are available in the "test" folder. 
     1. Another important unit test feature available is to avoid duplicating of source code & resources file during unit testing. If module A depends on module B and module B's test folder has source code and configuration file needed for B's unit testing, all such configuration and code in test from module B is available to module A unit testing without duplicating those files into module A test folder. This is possible by declaring "test-jar" at "test" scope dependency in module A. An example can be found at unicorn-api's pom file for a dependency into unicorn-service module.  
     2. Cassandra unit testing is challenging as the cassandra-unit test libraries is inactive. All Cassandra testing is performed using mockito by mocking Dao code. Look at FlightServiceTest.java
+    3. Kafka end to end testing is performed using an embedded Kafka server - For an end to end example refer to FlightEventTest and the comments in that test case.
+    4. **mvn clean test** only runs unit test where as **mvn clean install** or **mvn clean verify** runs integration tests. Integration tests take longer to run, also sometimes it fails for no specific reasib (example kafka embedded test) so run again.
 3. Logging is controlled through slf4j and logback. There is a default logback.xml that provides console and file appender. The logback file also supports MDC: transactionId to assign a unique transactionId for a request, this is controlled through 'transactionId' parameter. Caller can pass a HTTP header with 'transactionId' as key and a value, if none is provided, unicorn would create a new transactionId for that request and use that during logging wherever that request thread goes.
 4. Actors run on arbitrary threads, hence the transactionId that is passed along to actor need to be set at beginning of actor execution to get MDC feature. Plumbing piece are put together to convert transactionId that is settable from actor. Refer to RandomService.java & RandomGeneratorActor.java for an example of how to set the transactionId correctly before actors are invoked. 
 5. AKKA is customized to work with Spring, so that AKKA actors are created as spring bean and hence spring properties can be injected to AKKA actors. Core classes to achieve this are in unicorn-common/actor package refer to SpringActorProducer, SpringExtension, ParameterInjector & Parameters. 
@@ -156,8 +157,8 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 3. ~~Add Cassandra.~~
 4. ~~Add REDIS as Cache storage~~
 5. ~~Add Kafka.~~  
-6.  Add test support for Kafka through embedded kafka if not possible via Mockito
-7. Implement Cluster sharding.
+6.  ~~Add unit & integration test support for Kafka by using embedded kafka~~
+7. Implement AKKA Cluster sharding.
 8. Add RDBMS.
 9. ~~Add Akka persistence with Junit Testing.~~
 10. Create some examples to use REDIS using spring-data REDIS.
@@ -166,9 +167,9 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 13. Create Hashicorp - Terra-form for AWS Cloud formation template with Chef scripts to deploy these into AWS with elasticity & auto scaling feature.
 14. Integrate with Cloud-bees for CI/CD.
 15. Use docker using Hashicorp - Packer.
-16. Create a new fork form all the above project based on our needs using DDD style by bounded contexts.
+16. Create a new fork form all the above project based on our needs using.
 17. Consideration for out of order processing - e.g. flight cancel came first and then came flight time update. (depend on the timestamp of message?). 
-18. Implement timeout for remote calls database, cache, redis, cassandra etc.
+18. Implement timeout for remote calls database, cache, redis, cassandra, kafka etc.
 19. Implement throttling using hysterix.
 
 #### Minor Todo

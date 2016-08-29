@@ -1,7 +1,7 @@
 package com.unicorn.api;
 
 import com.unicorn.common.domain.FlightEvent;
-import com.unicorn.service.FlightEventPublishService;
+import com.unicorn.service.FlightEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class KafkaShowcaseRestApi {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaShowcaseRestApi.class);
 
     @Autowired
-    private FlightEventPublishService flightEventPublishService;
+    private FlightEventPublisher flightEventPublisher;
 
     /**
      * Send the message to the Kafka service for publishing.
@@ -34,7 +34,7 @@ public class KafkaShowcaseRestApi {
 
         LOGGER.info("API received the flight event.");
 
-        flightEventPublishService.publish(flightEvent);
+        flightEventPublisher.publish(flightEvent);
 
         return new ResponseEntity<String>("Flight Event published.", HttpStatus.OK);
     }

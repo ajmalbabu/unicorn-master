@@ -2,6 +2,7 @@
 server:
   address: localhost
   port: 8082
+  number.of.shards: 10
 redis:
   host: localhost
   port: 6379

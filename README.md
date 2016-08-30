@@ -8,6 +8,10 @@
 
 1. This project runs using standard Spring boot and Maven with maven dependency management best practice implemented. It has dependency to REDIS, Cassandra & (Future - Postgres, Kafka) but one can start and checkout the application without having any of these external available in a local laptop. This helps developers to get started immediately and play around with the application without hassles.
 2. Open the project in your editor of choice (IntelliJ is recommended) as a maven project.
+3. **key** step. Two milestone release jar files from spring data is bundled along with the project. These milestone are needed to work with Cassandra 3.0 version. And these milestone will be general release in two months. Meanwhile these two files needs to be installed in your local maven repository manually by executing the below commands.
+    1. These files are present in the milestone-repo folder go to that folder before executing the below commands. 
+    2. mvn install:install-file -Dfile=spring-data-cassandra-1.5.0.M1.jar -DgroupId=org.springframework.data -DartifactId=spring-data-cassandra -Dversion=1.5.0.M1 -Dpackaging=jar
+    3. mvn install:install-file -Dfile=spring-cql-1.5.0.M1.jar -DgroupId=org.springframework.data -DartifactId=spring-cql -Dversion=1.5.0.M1 -Dpackaging=jar
 3. The project will be imported as a Maven project, below single step configuration can start the application in a laptop.
 4. Run `unicorn-api/src/main/java/com/unicorn/api/Application` 
     1. Then edit configuration and provide the following values according to the local path on your machine and rerun the application again
@@ -44,7 +48,7 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
    }
 }
 ```
-2. To add more money to above customer send the following HTTP PUT request.
+2. To add more money to above bank account, send the following HTTP PUT request.
 ```
 http://127.0.0.1:8082/unicorn-api/v1/bankAccount
 with below json payload - make sure to set the HTTP header "Content-Type" to "application/json" in postman 
@@ -60,19 +64,23 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 ```
 http://127.0.0.1:8082/unicorn-api/v1/bankAccount?bankAccountName=Jon
 ```
-4. Persistence actors are using LevelDB as persistent storage, it can be changed by switching maven dependency to point to Cassandra storage and update AKKA configuration for better resiliency.
+4. Persistence actors are using LevelDB as persistent storage, it can be changed by running a local Cassandra and update/uncomment unicorn-akka.conf file to point to cassandra.
 5. Persistence actors has a bunch of unit-test cases and those one uses in memory persistence storage. Checkout the test cases.
+6. Refer to AKKA cluster shard later. 
 
 ### isolate profile explained.
 
-1. System in production can use REDIS (for cache) and Cassandra (as database, coming more on this later). But it can work without having both of these instance available and it will use in-memory cache and none of the cassandra database access code will not work but application will come up and all other parts are available for access. Its possible because system is configured by default to run with **isolate** profile in local laptop and this is set during system startup look at start up parameters. This mode can be removed by taking out **isolate** profile during startup once REDIS and Cassandra are installed. See the steps later. 
-2. REDIS for microsoft windows - download and install MSI  https://github.com/MSOpenTech/redis/releases this would automatically start REDIS as a windows service at localhost:6379. To change any of the default configuration read the documentation that comes with installation "Windows Service Documentation.docx"
-3. REDIS can be accessed using Jedis/lettuce API Jedis jar is packaged along with the application and a redisTemplate with name 'primaryRedisTemplate' is configured and ready to use. 
+1. System can use REDIS (for cache) and Cassandra (as database, coming more on this later). But it can work without having both of these instance available and it will use an in-memory cache and none of the cassandra database access code will not work but application will come up and all other parts are available for access. Its possible because system is configured by default to run with **isolate** profile in local laptop and this is set during system startup look at start up parameters. This mode can be removed by taking out **isolate** profile during startup once REDIS and Cassandra are installed. See the steps later. 
+
+### REDIS installation
+
+1. REDIS for microsoft windows - download and install MSI  https://github.com/MSOpenTech/redis/releases this would automatically start REDIS as a windows service at localhost:6379. To change any of the default configuration read the documentation that comes with installation "Windows Service Documentation.docx"
+2. REDIS can be accessed using Jedis/lettuce API Jedis jar is packaged along with the application and a redisTemplate with name 'primaryRedisTemplate' is configured and ready to use. 
 
 ### Cassandra example usage.
 
 1. This scenario showcase how to access data from real Cassandra.
-2. Data is stored in cassandra to do that, Install cassandra 2.2.7 from http://www.planetcassandra.org/archived-versions-of-datastaxs-distribution-of-apache-cassandra/- start cassandra as windows service.
+2. Data is stored in cassandra to do that, Install cassandra 3.0.8 from http://www.planetcassandra.org/archived-versions-of-datastaxs-distribution-of-apache-cassandra/ start cassandra as windows service.
 3. Open Cassandra CQL shell create a keyspace and table and insert data as below
 ```
     CREATE KEYSPACE cep  WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
@@ -82,8 +90,8 @@ http://127.0.0.1:8082/unicorn-api/v1/bankAccount?bankAccountName=Jon
       pnrs List<text>
     );
     insert into flight (flightKey , pnrs) values ('200-2016:01:01:08:00:12:00-DAL-NYC',['DF45YU','Z45RT7']);
-    update flight set pnrs = pnrs + ['GH59T5'] where flightKey = '200-2016:01:01:08:00:12:00-DAL-NYC'
-    select * from flight
+    update flight set pnrs = pnrs + ['GH59T5'] where flightKey = '200-2016:01:01:08:00:12:00-DAL-NYC';
+    select * from flight;
 ```
 4. Cassandra end point can be tested by issuing a HTTP get request http://127.0.0.1:8082/unicorn-api/v1/flight
 5. Once Cassandra & REDIS is running in the above PORT, restart the Application by removing "isolate" profile in the start-up JVM arguments. Now Spring would connect to REDIS & Cassandra severs instead of in-memory cache & with  real column families. A log would appear in the application log that says connecting to REDIS cache.
@@ -121,6 +129,15 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 ```
 10. A message appears of producing and consuming the message.
 11. **Note** Spring kafka client (http://docs.spring.io/spring-kafka/docs/1.1.0.M1/reference/html/index.html) is tried out but it seems too complex to use, first they don't have enough documentation in samples. But tried and made it to work but removed that from codebase. Direct Kafka API is straight-forward. Spring tries to take the same approach as JMS listener for Kafka and that seems like a leaky abstraction to fit Kafka into it. Currently at-mos-once client example is implemented using Kafka clients, other at-least-once and exactly-once can be easily implemented using the examples from https://github.com/ajmalbabu/kafka-clients
+12. Kafka unit and integration testing - Refer to **Other best practice** section.
+
+### AKKA cluster shard
+1. The samples we saw earlier in AKKA persistence usage, all such actors are created by taking advantage of AKKA cluster & cluster shard.
+2. When application runs, a single node AKKA cluster comes up and all the bank account persistence actors are created in this cluster node using cluster shard. 
+3. To run multi-node cluster. 
+    1. Change the unicorn-configuration/unicorn-akka.conf file accordingly for the property **node.host** and **node.port** to the port number of specific cluster node. Also change spring jetty ports **server.port** & **management.port** in spring /application*env.yaml file. 
+    2. Or provide the above values during application start-up using java **-D** option for e.g. **-Dnode.host=127.0.0.1** **-Dnode.port=2552** e.g. -Dnode.host=127.0.0.1 -Dnode.port=2552 -Dserver.port=8084 -Dmanagement.port=8085
+    3. To change the seed nodes update unicorn-configuration/unicorn-akka.conf **node.seed-nodes** section.
 
 ### Other best practices
 
@@ -158,7 +175,7 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 4. ~~Add REDIS as Cache storage~~
 5. ~~Add Kafka.~~  
 6.  ~~Add unit & integration test support for Kafka by using embedded kafka~~
-7. Implement AKKA Cluster sharding.
+7. ~~Implement AKKA Cluster & cluster sharding.~~
 8. Add RDBMS.
 9. ~~Add Akka persistence with Junit Testing.~~
 10. Create some examples to use REDIS using spring-data REDIS.
@@ -171,6 +188,8 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 17. Consideration for out of order processing - e.g. flight cancel came first and then came flight time update. (depend on the timestamp of message?). 
 18. Implement timeout for remote calls database, cache, redis, cassandra, kafka etc.
 19. Implement throttling using hysterix.
+20. Create Chef scripts to update IP address, port, actor system name etc in the unicorn-akka.conf  **node** section.
+21. Chef scripts also should update the **server.number.of.shards** in **application-environment.yaml** file. 
 
 #### Minor Todo
 
@@ -179,7 +198,6 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 3. Remove default serializers in AKKA.
 4. When flight event is published to Kafka and if Kafka is not running at that time, it is blokcing the REST request.
 5. TODO Assign a thread-pool for Kafka listeners and use threads from there instead of using random threads. FlightEventListener.java
-
-
+6. Change Persistence storage to Cassandra instead of Level-db
 
 

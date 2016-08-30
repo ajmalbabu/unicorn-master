@@ -27,8 +27,7 @@ public class RandomService {
     @Autowired
     private AkkaProperties akkaProperties;
 
-    @Autowired
-    private TransactionIdService transactionIdService;
+    private TransactionIdService transactionIdService = TransactionIdService.instance();
 
     @Autowired
     private SpringExtension springExtension;

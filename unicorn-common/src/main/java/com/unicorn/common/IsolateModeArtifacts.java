@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.cassandra.config.CassandraSessionFactoryBean;
 import org.springframework.data.util.ReflectionUtils;
 
+import java.util.Map;
+
 /**
  * <p>
  * Classes here makes it possible to run without real Cassandra or REDIS up and running.
@@ -40,12 +42,22 @@ class IsolateModeArtifacts extends CassandraSessionFactoryBean {
         }
 
         @Override
+        public ListenableFuture<Session> initAsync() {
+            return null;
+        }
+
+        @Override
         public ResultSet execute(String s) {
             return null;
         }
 
         @Override
         public ResultSet execute(String s, Object... objects) {
+            return null;
+        }
+
+        @Override
+        public ResultSet execute(String s, Map<String, Object> map) {
             return null;
         }
 
@@ -61,6 +73,11 @@ class IsolateModeArtifacts extends CassandraSessionFactoryBean {
 
         @Override
         public ResultSetFuture executeAsync(String s, Object... objects) {
+            return null;
+        }
+
+        @Override
+        public ResultSetFuture executeAsync(String s, Map<String, Object> map) {
             return null;
         }
 

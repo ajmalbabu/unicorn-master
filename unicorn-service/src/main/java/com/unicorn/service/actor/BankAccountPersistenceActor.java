@@ -11,7 +11,6 @@ import com.unicorn.common.actor.ParameterInjector;
 import com.unicorn.common.actor.Parameters;
 import com.unicorn.common.service.TransactionIdService;
 import com.unicorn.service.domain.BankTransaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -22,40 +21,38 @@ import java.util.UUID;
 
 import static com.unicorn.common.actor.Parameters.PERSISTENCE_ID;
 
-@Service(CustomerAccountPersistenceActor.CUSTOMER_ACCOUNT_PERSISTENCE_ACTOR)
+@Service(BankAccountPersistenceActor.BANK_ACCOUNT_PERSISTENCE_ACTOR)
 @Scope("prototype")
 @Lazy
-public class CustomerAccountPersistenceActor extends UntypedPersistentActor implements ParameterInjector {
+public class BankAccountPersistenceActor extends UntypedPersistentActor implements ParameterInjector {
 
-    public static final String CUSTOMER_ACCOUNT_PERSISTENCE_ACTOR = "customerAccountPersistenceActor";
+    public static final String BANK_ACCOUNT_PERSISTENCE_ACTOR = "bankAccountPersistenceActor";
 
     private DiagnosticLoggingAdapter log = Logging.getLogger(this);
 
-    @Autowired
-    private TransactionIdService transactionIdService;
+    private TransactionIdService transactionIdService = TransactionIdService.instance();
 
-    private String customerId;
+    private String bankAccountName;
 
     private double currentBalance = Double.MIN_VALUE;
 
     @Override
     public void setParameters(Parameters parameters) {
-        customerId = parameters.getString(PERSISTENCE_ID);
-    }
-
-
-    @Override
-    public String persistenceId() {
-        return customerId;
+        bankAccountName = parameters.getString(PERSISTENCE_ID);
     }
 
 
     private Map<UUID, BankTransaction> recoverMessages = new TreeMap<UUID, BankTransaction>();
 
     @Override
+    public String persistenceId() {
+        return "BankAccount-" + getSelf().path().name();
+    }
+
+    @Override
     public void onReceiveRecover(Object msg) {
 
-        log.info("Receive recover invoked for customer: {} with message: {}.", customerId, msg);
+        log.info("Receive recover invoked for customer: {} with current balance: {}. The message is: {}", this, currentBalance, msg);
 
         if (msg instanceof BankTransaction) {
 
@@ -67,7 +64,7 @@ public class CustomerAccountPersistenceActor extends UntypedPersistentActor impl
                 updateCurrentBalance((BankTransaction) msg);
 
             } else {
-                log.info("Receive recover for: {} with message: {} is ALREADY processed, skipping this message. ", customerId, bankTransaction);
+                log.info("Receive recover for: {} with message: {} is ALREADY processed, skipping this message. ", this, bankTransaction);
             }
 
         } else if (msg instanceof SnapshotOffer) {
@@ -81,7 +78,7 @@ public class CustomerAccountPersistenceActor extends UntypedPersistentActor impl
     @Override
     public void onReceiveCommand(Object msg) {
 
-        log.info("ReceiveCommand for customer: {} with message: {}", customerId, msg);
+        log.info("ReceiveCommand for customer: {} with bal {} received message: {}", this, currentBalance, msg);
 
         if (msg instanceof BankTransaction) {
 
@@ -119,10 +116,10 @@ public class CustomerAccountPersistenceActor extends UntypedPersistentActor impl
         double transactionAmount = bankTransaction.getAdjustedTransactionAmount();
         if (currentBalance != Double.MIN_VALUE) {
 
-            log.info("Change the balance: {} with: {}", currentBalance, transactionAmount);
+            log.info("Update current balance: {} with amount: {}", currentBalance, transactionAmount);
             transactionAmount = transactionAmount + currentBalance;
         }
-        log.info("Set the balance: {} to: {}", currentBalance, transactionAmount);
+        log.info("Replace current balance: {} to: {}", currentBalance, transactionAmount);
         currentBalance = transactionAmount;
     }
 

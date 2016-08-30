@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = SpringConfig.class)
-public class CustomerServiceTest {
+public class BankAccountServiceTest {
 
     @Autowired
     private BankAccountService bankAccountService;
@@ -27,7 +27,7 @@ public class CustomerServiceTest {
     private SpringExtension springExtension;
 
     @Test
-    public void createCustomerAndRetrieveInitialBalance() throws Exception {
+    public void createBankAccountAndRetrieveInitialBalance() throws Exception {
 
         // Given
         BankAccount bankAccount = new BankAccount();

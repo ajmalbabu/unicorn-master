@@ -2,7 +2,6 @@ package com.unicorn.common.service;
 
 import com.google.common.base.Strings;
 import org.slf4j.MDC;
-import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -12,10 +11,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Helps to create unique transaction identifier and set into MDC if one does not exists in MDC.
  */
-@Service
 public class TransactionIdService implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private static TransactionIdService transactionIdService = new TransactionIdService();
 
     // UUID is a good transaction identifier but it uses lots of file space hence converting to a hash with the limitation hash collision.
     public static final int TRANSACTION_ID_LENGTH = 10;
@@ -23,6 +23,10 @@ public class TransactionIdService implements Serializable {
     public static final String TRANSACTION_ID = "transactionId";
 
     private AtomicInteger transactionId = new AtomicInteger(1);
+
+    public static TransactionIdService instance() {
+        return transactionIdService;
+    }
 
     public Map<String, Object> currentTransactionIdAsMap() {
         if (MDC.get(TRANSACTION_ID) == null) {

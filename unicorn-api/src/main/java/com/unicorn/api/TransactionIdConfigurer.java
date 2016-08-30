@@ -2,7 +2,6 @@ package com.unicorn.api;
 
 import com.unicorn.common.service.TransactionIdService;
 import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,8 +22,7 @@ import static com.unicorn.common.service.TransactionIdService.TRANSACTION_ID;
 public class TransactionIdConfigurer extends WebMvcConfigurerAdapter {
 
 
-    @Autowired
-    private TransactionIdService transactionIdService;
+    private TransactionIdService transactionIdService = TransactionIdService.instance();
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

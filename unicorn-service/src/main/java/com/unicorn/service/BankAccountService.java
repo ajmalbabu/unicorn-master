@@ -1,14 +1,14 @@
 package com.unicorn.service;
 
 import akka.actor.ActorRef;
-import com.unicorn.common.actor.ActorInfo;
+import akka.cluster.sharding.ClusterSharding;
 import com.unicorn.common.actor.AkkaProperties;
 import com.unicorn.common.actor.PersistenceActorRegistrar;
 import com.unicorn.common.actor.SpringExtension;
-import com.unicorn.common.domain.PersistenceActorCreateCommand;
 import com.unicorn.common.service.TransactionIdService;
 import com.unicorn.service.domain.BankAccount;
 import com.unicorn.service.domain.BankTransaction;
+import com.unicorn.service.domain.ClusterShardEnvelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import scala.concurrent.duration.FiniteDuration;
 import java.util.concurrent.TimeUnit;
 
 import static akka.pattern.Patterns.ask;
-import static com.unicorn.service.actor.CustomerAccountPersistenceActor.CUSTOMER_ACCOUNT_PERSISTENCE_ACTOR;
+import static com.unicorn.service.actor.BankAccountPersistenceActor.BANK_ACCOUNT_PERSISTENCE_ACTOR;
 
 
 @Service
@@ -31,8 +31,7 @@ public class BankAccountService {
     @Autowired
     private AkkaProperties akkaProperties;
 
-    @Autowired
-    private TransactionIdService transactionIdService;
+    private TransactionIdService transactionIdService = TransactionIdService.instance();
 
     @Autowired
     private SpringExtension springExtension;
@@ -53,13 +52,15 @@ public class BankAccountService {
 
         LOGGER.info("Create bankAccount: {}", bankAccount);
 
-        ActorRef customerAccountPersistenceActor = persistenceActorRegistrar.createAndRegister(
-                new PersistenceActorCreateCommand(CUSTOMER_ACCOUNT_PERSISTENCE_ACTOR, bankAccount.getName()));
+        ActorRef bankAccountActor = retrieveBankAccountActor(bankAccount.getName());
+
+        // Add logic to check if this is really a new account. Not an already existing one.
 
         LOGGER.info("BankAccount created for: {}. perform initial transaction {} into the account.",
                 bankAccount.getName(), bankAccount.getBankTransaction());
 
-        customerAccountPersistenceActor.tell(bankAccount.getBankTransaction(), ActorRef.noSender());
+
+        transact(bankAccount);
 
     }
 
@@ -67,14 +68,16 @@ public class BankAccountService {
 
         LOGGER.info("Select customer account for: {}", bankAccount.getName());
 
-        ActorRef customerAccountActor = retrieveBankAccountPersistentActor(bankAccount.getName());
+        ActorRef bankAccountActor = retrieveBankAccountActor(bankAccount.getName());
 
-        LOGGER.info("BankAccount retrieved: {}, perform transaction {} into the account.", customerAccountActor, bankAccount.getBankTransaction());
+        // Add logic to check if this is not a new account. But an already existing account, else reject transaction.
+
+        LOGGER.info("BankAccount retrieved: {}, perform transaction {} into the account.", bankAccountActor, bankAccount.getBankTransaction());
 
         BankTransaction bankTransaction = bankAccount.getBankTransaction();
         bankTransaction.setMdc(transactionIdService.currentTransactionIdAsMap());
 
-        customerAccountActor.tell(bankTransaction, ActorRef.noSender());
+        bankAccountActor.tell(new ClusterShardEnvelope(bankAccount.getName(), bankTransaction), ActorRef.noSender());
 
     }
 
@@ -82,24 +85,24 @@ public class BankAccountService {
 
         LOGGER.info("Retrieve customer balance for: {}", bankAccountName);
 
-        ActorRef customerAccountActor = retrieveBankAccountPersistentActor(bankAccountName);
+        ActorRef bankAccountActor = retrieveBankAccountActor(bankAccountName);
 
-        LOGGER.info("BankAccount retrieved: {}, perform retrieve balance .", customerAccountActor);
+        LOGGER.info("BankAccount retrieved: {}, perform retrieve balance .", bankAccountActor);
 
-        Future futureResult = ask(customerAccountActor, "currentBalance", 2000);
+        Future futureResult = ask(bankAccountActor, new ClusterShardEnvelope(bankAccountName, "currentBalance"), 2000);
 
         return (Double) Await.result(futureResult, FiniteDuration.create(2, TimeUnit.SECONDS));
 
     }
 
-    public ActorRef retrieveBankAccountPersistentActor(String customerName) {
+    public ActorRef retrieveBankAccountActor(String bankAccountName) {
 
-        ActorRef customerAccountActor = new ActorInfo(customerName).actor(akkaProperties.getActorSystem());
+        ActorRef bankAccountActor = ClusterSharding.get(akkaProperties.getActorSystem()).shardRegion(BANK_ACCOUNT_PERSISTENCE_ACTOR);
 
-        if (customerAccountActor == null) {
-            throw new RuntimeException("Could not find actor for customer: " + customerName);
+        if (bankAccountActor == null) {
+            throw new RuntimeException("Could not find actor for bank account: " + bankAccountName);
         }
-        return customerAccountActor;
+        return bankAccountActor;
     }
 
 

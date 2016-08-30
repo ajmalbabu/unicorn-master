@@ -12,7 +12,6 @@ import com.unicorn.common.service.TransactionIdService;
 import com.unicorn.service.domain.RandomGenerateResponse;
 import com.unicorn.service.domain.RandomGenerateResponseList;
 import com.unicorn.service.domain.RandomGenerateResponseRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -39,8 +38,7 @@ public class RandomGeneratorResponseCollectorActor extends UntypedActor implemen
 
     private static final long ACTOR_LIFETIME = 1000 * 60 * 30;
 
-    @Autowired
-    private TransactionIdService transactionIdService;
+    private TransactionIdService transactionIdService = TransactionIdService.instance();
 
     private int expectedNumberOfMessage;
 

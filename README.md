@@ -132,7 +132,7 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 11. **Note** Spring kafka client (http://docs.spring.io/spring-kafka/docs/1.1.0.M1/reference/html/index.html) is tried out but it seems too complex to use, first they don't have enough documentation in samples. But tried and made it to work but removed that from codebase. Direct Kafka API is straight-forward. Spring tries to take the same approach as JMS listener for Kafka and that seems like a leaky abstraction to fit Kafka into it. Currently at-mos-once client example is implemented using Kafka clients, other at-least-once and exactly-once can be easily implemented using the examples from https://github.com/ajmalbabu/kafka-clients
 12. Kafka unit and integration testing - Refer to **Other best practice** section.
 
-### AKKA cluster shard
+### AKKA cluster shard using Cassandra.
 1. The samples we saw earlier in AKKA persistence usage, all such actors are created by taking advantage of AKKA cluster & cluster shard.
 2. When application runs on single node AKKA cluster comes up and all the bank account persistence actors are created in this cluster node using cluster shard. 
 3. To run multi-node cluster and enable cluster shard to enable creation on sharded nodes.
@@ -140,6 +140,18 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
     1. Change the unicorn-configuration/unicorn-akka.conf file following property manually **node.host** and **node.port** to the port number of specific cluster node. Also change spring jetty ports **server.port** & **management.port** in spring /application*env.yaml file. 
     2. Or provide the above values during application start-up using java **-D** option for e.g. **-Dnode.host=127.0.0.1** **-Dnode.port=2552** e.g. of a complete value is here **-Dnode.host=127.0.0.1 -Dnode.port=2552 -Dserver.port=8084 -Dmanagement.port=8085**
     3. To change the seed nodes update unicorn-configuration/unicorn-akka.conf **node.seed-nodes** section.
+
+
+### Cassandra persistence configuration useful notes
+1. The Correct Github URL for this project is https://github.com/akka/akka-persistence-cassandra 
+2. A sample Cassandra akka conf is present here, which can be overridden for the only needed values. https://github.com/akka/akka-persistence-cassandra/blob/v0.17/src/main/resources/reference.conf
+3. If old messages need to be deleted best option is 
+    1. Login to CQL shell and execute below commands
+    2. use akka;
+    3. truncate messages;
+    4. All CQL used by Cassandra storage can be found here https://github.com/krasserm/akka-persistence-cassandra/blob/cassandra-3.x/src/main/scala/akka/persistence/cassandra/journal/CassandraStatements.scala#L16-L31
+4. If messages need to be deleted in actor and remove from jurnal, to avoid replay, follow this approach.  http://doc.akka.io/docs/akka/2.4.9/scala/persistence.html#Message_deletion
+
 
 ### Other best practices
 

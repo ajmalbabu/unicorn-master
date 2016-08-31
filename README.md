@@ -12,6 +12,7 @@
     1. These files are present in the milestone-repo folder go to that folder before executing the below commands. 
     2. mvn install:install-file -Dfile=spring-data-cassandra-1.5.0.M1.jar -DgroupId=org.springframework.data -DartifactId=spring-data-cassandra -Dversion=1.5.0.M1 -Dpackaging=jar
     3. mvn install:install-file -Dfile=spring-cql-1.5.0.M1.jar -DgroupId=org.springframework.data -DartifactId=spring-cql -Dversion=1.5.0.M1 -Dpackaging=jar
+    4. Details on spring milestone release here http://stackoverflow.com/questions/38978491/spring-boot-1-4-spring-data-cassandra-1-4-2-is-incompatible-with-cassandra-3-0/38978826#38978826
 3. The project will be imported as a Maven project, below single step configuration can start the application in a laptop.
 4. Run `unicorn-api/src/main/java/com/unicorn/api/Application` 
     1. Then edit configuration and provide the following values according to the local path on your machine and rerun the application again
@@ -133,10 +134,11 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 
 ### AKKA cluster shard
 1. The samples we saw earlier in AKKA persistence usage, all such actors are created by taking advantage of AKKA cluster & cluster shard.
-2. When application runs, a single node AKKA cluster comes up and all the bank account persistence actors are created in this cluster node using cluster shard. 
-3. To run multi-node cluster. 
-    1. Change the unicorn-configuration/unicorn-akka.conf file accordingly for the property **node.host** and **node.port** to the port number of specific cluster node. Also change spring jetty ports **server.port** & **management.port** in spring /application*env.yaml file. 
-    2. Or provide the above values during application start-up using java **-D** option for e.g. **-Dnode.host=127.0.0.1** **-Dnode.port=2552** e.g. -Dnode.host=127.0.0.1 -Dnode.port=2552 -Dserver.port=8084 -Dmanagement.port=8085
+2. When application runs on single node AKKA cluster comes up and all the bank account persistence actors are created in this cluster node using cluster shard. 
+3. To run multi-node cluster and enable cluster shard to enable creation on sharded nodes.
+    1. Make sure to enable cassandra persistence storage uncomment cassandra section in **unicorn.akka.conf** and disable the level-db section.
+    1. Change the unicorn-configuration/unicorn-akka.conf file following property manually **node.host** and **node.port** to the port number of specific cluster node. Also change spring jetty ports **server.port** & **management.port** in spring /application*env.yaml file. 
+    2. Or provide the above values during application start-up using java **-D** option for e.g. **-Dnode.host=127.0.0.1** **-Dnode.port=2552** e.g. of a complete value is here **-Dnode.host=127.0.0.1 -Dnode.port=2552 -Dserver.port=8084 -Dmanagement.port=8085**
     3. To change the seed nodes update unicorn-configuration/unicorn-akka.conf **node.seed-nodes** section.
 
 ### Other best practices

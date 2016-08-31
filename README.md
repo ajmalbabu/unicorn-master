@@ -136,7 +136,7 @@ with below json payload - make sure to set the HTTP header "Content-Type" to "ap
 1. The samples we saw earlier in AKKA persistence usage, all such actors are created by taking advantage of AKKA cluster & cluster shard.
 2. When application runs on single node AKKA cluster comes up and all the bank account persistence actors are created in this cluster node using cluster shard. 
 3. To run multi-node cluster and enable cluster shard to enable creation on sharded nodes.
-    1. Make sure to enable cassandra persistence storage uncomment cassandra section in **unicorn.akka.conf** and disable the level-db section.
+    1. Make sure to enable cassandra persistence storage; uncomment cassandra section in **unicorn.akka.conf** and comment the level-db section. Also disable isolate profile from spring startup.
     1. Change the unicorn-configuration/unicorn-akka.conf file following property manually **node.host** and **node.port** to the port number of specific cluster node. Also change spring jetty ports **server.port** & **management.port** in spring /application*env.yaml file. 
     2. Or provide the above values during application start-up using java **-D** option for e.g. **-Dnode.host=127.0.0.1** **-Dnode.port=2552** e.g. of a complete value is here **-Dnode.host=127.0.0.1 -Dnode.port=2552 -Dserver.port=8084 -Dmanagement.port=8085**
     3. To change the seed nodes update unicorn-configuration/unicorn-akka.conf **node.seed-nodes** section.
